@@ -20,7 +20,7 @@ namespace UserManager
             switch (type)
             {
                 case ProviderType.Database:
-                    provider = new DatabaseProvider(new DbContextOptionsBuilder<DatabaseProvider>().UseSqlServer(connectionString).Options);
+                    provider = new DatabaseProvider(new DbContextOptionsBuilder<DatabaseProvider>().UseSqlServer(connectionString).EnableSensitiveDataLogging().Options);
                     break;
                 case ProviderType.InMemory:
                     provider = new InMemoryProvider();

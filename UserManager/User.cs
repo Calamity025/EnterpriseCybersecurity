@@ -18,10 +18,5 @@ namespace UserManager
             Admin,
             User
         }
-
-        public override string ToString()
-        {
-            return $"Welcome back!\r\nLogin: {Login}\r\nName: {Name}\r\nRole: {Role.ToString()}";
-        }
     }
 }

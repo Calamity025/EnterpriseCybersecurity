@@ -17,41 +17,41 @@ namespace UserManager
         public User CreateOrUpdate(User user)
         {
             var tryGetUser = Users.Find(user.Login);
-            User resultedUser;
             if(tryGetUser == null)
             {
                 Users.Add(user);
-                resultedUser = user;
+                tryGetUser = user;
             }
             else
             {
-                tryGetUser = user;
+                tryGetUser.Password = user.Password;
+                tryGetUser.Name = user.Name;
+                tryGetUser.Role = tryGetUser.Role;
                 Users.Update(tryGetUser);
-                resultedUser = tryGetUser;
             }
 
             this.SaveChanges();
-            return resultedUser;
+            return tryGetUser;
         }
 
         public async Task<User> CreateOrUpdateAsync(User user)
         {
             var tryGetUser = await Users.FindAsync(user.Login);
-            User resultedUser;
             if (tryGetUser == null)
             {
                 Users.Add(user);
-                resultedUser = user;
+                tryGetUser = user;
             }
             else
             {
-                tryGetUser = user;
+                tryGetUser.Password = user.Password;
+                tryGetUser.Name = user.Name;
+                tryGetUser.Role = tryGetUser.Role;
                 Users.Update(tryGetUser);
-                resultedUser = tryGetUser;
             }
 
             await this.SaveChangesAsync();
-            return resultedUser;
+            return tryGetUser;
         }
 
         public void Delete(User user)
