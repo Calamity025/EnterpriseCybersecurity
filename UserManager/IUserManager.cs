@@ -1,4 +1,5 @@
-﻿using System.Threading.Tasks;
+﻿using System.Collections.Generic;
+using System.Threading.Tasks;
 
 namespace UserManager
 {
@@ -14,5 +15,7 @@ namespace UserManager
         Task ChangePermissionAsync(string issuerLogin, string issuerPassword, string targetLogin, User.Roles role);
         void DeleteUser(string issuerLogin, string issuerPassword, string targetLogin);
         Task DeleteUserAsync(string issuerLogin, string issuerPassword, string targetLogin);
+        void Seed(IEnumerable<User> users);
+        Task SeedAsync(IEnumerable<User> users);
     }
 }

@@ -87,6 +87,7 @@ namespace UserManager
             {
                 throw new ArgumentException("User with such login already exists");
             }
+            user.Role = User.Roles.User;
 
             return _provider.CreateOrUpdate(user);
         }
@@ -98,6 +99,7 @@ namespace UserManager
             {
                 throw new ArgumentException("User with such login already exists");
             }
+            user.Role = User.Roles.User;
 
             return await _provider.CreateOrUpdateAsync(user);
         }
@@ -173,6 +175,20 @@ namespace UserManager
             await _provider.DeleteAsync(user);
         }
 
+        public void Seed(IEnumerable<User> users)
+        {
+            foreach(var user in users)
+            {
+                _provider.CreateOrUpdate(user);
+            }
+        }
 
+        public async Task SeedAsync(IEnumerable<User> users)
+        {
+            foreach (var user in users)
+            {
+                await _provider.CreateOrUpdateAsync(user);
+            }
+        }
     }
 }

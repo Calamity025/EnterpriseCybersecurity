@@ -1,4 +1,5 @@
-﻿using System;
+﻿using Microsoft.EntityFrameworkCore;
+using System;
 using System.Collections.Generic;
 using System.Text;
 
@@ -12,14 +13,14 @@ namespace UserManager
             InMemory
         }
 
-        public IUserManager Create(ProviderType type)
+        public IUserManager Create(ProviderType type, string connectionString = null)
         {
             IProvider provider;
 
             switch (type)
             {
                 case ProviderType.Database:
-                    provider = new DatabaseProvider();
+                    provider = new DatabaseProvider(new DbContextOptionsBuilder<DatabaseProvider>().UseSqlServer(connectionString).Options);
                     break;
                 case ProviderType.InMemory:
                     provider = new InMemoryProvider();
