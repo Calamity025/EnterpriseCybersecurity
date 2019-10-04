@@ -1,1 +1,30 @@
-<p>login works!</p>
+<div class="mx-auto col-12 d-flex mt-3 justify-content-center">
+    <div class="col-6 px-5 border-right border-white" >
+        <h1>
+            Login
+        </h1>
+        <form class=" d-flex flex-column justify-content-center px-2 mt-4">
+            <label for="inputLogin3" class="control-label">Введите логин</label>
+            <input name="LoginL" type="text" class="form-control mb-3" id="loginL" placeholder="Login" [(ngModel)]="login.login" #LoginL="ngModel"/><br>
+            <label for="inputPassword3" class="control-label">Введите пароль</label>
+            <input name="PasswordL" type="password" class="form-control" id="passwordL" placeholder="Password" [(ngModel)]="login.password" #PasswordL="ngModel"/><br>
+            <button type="submit" class="mt-5 btn btn-success align-self-end" (click)="onLogInClick()">Sign in</button>
+        </form> 
+    </div>
+    <div class="col-6 px-5 border-left border-white" >
+            <h1>
+                Registration
+            </h1>
+            <form class=" d-flex flex-column justify-content-center px-2 mt-4">
+                <label for="inputLogin3" class="control-label">Введите логин</label>
+                <input name="Login" type="text" class="form-control mb-3" id="loginR" placeholder="Login"/><br>
+                <label for="inputEmail3" class="control-label">Введите имя</label>
+                <input name="Email" type="email" class="form-control mb-3" id="email" placeholder="Your name"/><br>
+                <label for="inputPassword3" class="control-label">Введите пароль</label>
+                <input name="Password" type="password" class="form-control mb-3" id="passwordR" placeholder="Password"/><br>
+                <label for="inputPassword3" class="control-label">Повторите пароль</label>
+                <input name="Password" type="password" class="form-control" id="passwordRepeatR" placeholder="Confirm Password"/><br>
+                <button type="submit" class="btn btn-success align-self-end mt-5">Sign up</button>
+            </form> 
+        </div>
+</div>
