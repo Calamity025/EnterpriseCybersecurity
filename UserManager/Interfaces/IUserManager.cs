@@ -1,7 +1,7 @@
 ﻿using System.Collections.Generic;
 using System.Threading.Tasks;
 
-namespace UserManager
+namespace UserManager.Interfaces
 {
     public interface IUserManager
     {

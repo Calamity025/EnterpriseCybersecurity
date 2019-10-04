@@ -2,6 +2,8 @@
 using System;
 using System.Collections.Generic;
 using System.Text;
+using UserManager.Interfaces;
+using UserManager.Providers;
 
 namespace UserManager
 {
