@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.IdentityModel.Tokens.Jwt;
 using System.Linq;
 using System.Security.Claims;
+using System.Text.RegularExpressions;
 using System.Threading.Tasks;
 using API;
 using Microsoft.AspNetCore.Authorization;
@@ -139,7 +140,11 @@ namespace API.Controllers
             {
                 return BadRequest(ModelState);
             }
-
+            var regex = new Regex("(?=[0-9]+)(?=[A-Za-z]+)");
+            if (!regex.IsMatch(passwordPayload.NewPassword))
+            {
+                return BadRequest("Password must contain at least 1 character and 1 number");
+            }
             try
             {
                 await _userManager.ChangePasswordAsync(User.Claims.FirstOrDefault(x => x.Type.Equals("login"))?.Value,
