@@ -36,20 +36,22 @@ export class HomepageComponent implements OnInit {
   }
 
   submit(){
-    this.loading = true;
-    this.auth.changePassword(this.passwordPayload).subscribe(
-      () => {
-        this.loading = false; 
-        this.changeToggle = false;
-        this.oldPasswordError = null;
-      },
-      err =>{
-        this.loading = false; 
-        if(err.status === 400){
-          this.oldPasswordError = err.error;
+    if(this.passwordSame){
+      this.loading = true;
+      this.auth.changePassword(this.passwordPayload).subscribe(
+        () => {
+          this.loading = false; 
+          this.changeToggle = false;
+          this.oldPasswordError = null;
+        },
+        err =>{
+          this.loading = false; 
+          if(err.status === 400){
+            this.oldPasswordError = err.error;
+          }
         }
-      }
-    );
+      );
+    }
   }
 
   onInput(){

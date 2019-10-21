@@ -7,6 +7,7 @@ import { User } from '../model/user';
 import { UserResponse } from '../model/userResponse';
 import { TokenService } from '../token.service';
 import { AuthService } from '../auth.service';
+import { UserCreation } from '../model/userCreation';
 declare var $:any;
 
 @Component({
@@ -16,9 +17,14 @@ declare var $:any;
 })
 export class LoginComponent implements OnInit {
   login : UserLogin = {login: null, password: null};
+  register : UserCreation = {login : null, password : null, name : null}
+  passwordConfirmation : string = null;
   loginPasswordError : string = null; 
   loginLoginError : string = null; 
   loading : boolean = false;
+  passwordSame = true;
+  loginError : string = null;
+  passwordError : string = null;
 
   constructor(
     private router : Router,
@@ -30,6 +36,31 @@ export class LoginComponent implements OnInit {
     if(this.auth.currentUser$.value){
       this.router.navigate(['home']);
     }
+  }
+
+  onRegister(){
+    this.loading = true;
+    this.auth.create(this.register).subscribe(
+      x => {
+        this.router.navigate(['home']);
+        this.loading = false;
+      },
+      err => {
+        if(err.status === 400){
+          this.passwordError = err.error;
+          this.loginError = null;
+        }
+        else if(err.status === 404){
+          this.loginError = err.error;
+          this.passwordError = null;
+        }
+        this.loading = false;
+      }
+    )
+  }
+
+  onInput(){
+    this.passwordSame = this.register.password === this.passwordConfirmation;
   }
 
   onLogInClick(){

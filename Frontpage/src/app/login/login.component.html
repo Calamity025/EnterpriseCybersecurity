@@ -24,14 +24,17 @@
             </h1>
             <form class=" d-flex flex-column justify-content-center px-2 mt-4">
                 <label for="inputLogin3" class="control-label">Введите логин</label>
-                <input name="Login" type="text" class="form-control mb-3" id="loginR" placeholder="Login"/><br>
+                <input name="Login" type="text" class="form-control mb-3" id="loginR" placeholder="Login"  [(ngModel)]="register.login" #LoginR="ngModel" [class.is-invalid]="loginError"/><br>
+                <span *ngIf="loginError" style="color: red;">{{loginError}}<br></span>
                 <label for="inputEmail3" class="control-label">Введите имя</label>
-                <input name="Email" type="email" class="form-control mb-3" id="email" placeholder="Your name"/><br>
+                <input name="Email" type="email" class="form-control mb-3" id="email" placeholder="Your name" [(ngModel)]="register.name" #NameR="ngModel"/><br>
                 <label for="inputPassword3" class="control-label">Введите пароль</label>
-                <input name="Password" type="password" class="form-control mb-3" id="passwordR" placeholder="Password"/><br>
+                <input name="Password" type="password" class="form-control mb-3" id="passwordR" (input)=onInput() placeholder="Password" [(ngModel)]="register.password" #PasswordR="ngModel" [class.is-invalid]="!passwordSame || passwordError"/><br>
+                <span *ngIf="passwordError" style="color: red;">{{passwordError}}<br></span>
                 <label for="inputPassword3" class="control-label">Повторите пароль</label>
-                <input name="Password" type="password" class="form-control" id="passwordRepeatR" placeholder="Confirm Password"/><br>
-                <button type="submit" class="btn btn-success align-self-end mt-5">Sign up</button>
+                <input name="Password" type="password" class="form-control" id="passwordRepeatR" (input)="onInput()" placeholder="Confirm Password" [(ngModel)]="passwordConfirmation" #PasswordConfR="ngModel" [class.is-invalid]="!passwordSame"/><br>
+                <span *ngIf="!passwordSame" style="color: red;">Пароли должны совпадать</span><br>
+                <button type="submit" class="btn btn-success align-self-end mt-5" (click)="onRegister()">Sign up</button>
             </form> 
         </div>
 </div>

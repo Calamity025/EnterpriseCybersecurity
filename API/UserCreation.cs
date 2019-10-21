@@ -6,12 +6,13 @@ using System.Threading.Tasks;
 
 namespace API
 {
-    public class PasswordPayload
+    public class UserCreation
     {
         [Required]
-        public string OldPassword { get; set; }
+        public string Login { get; set; }
         [Required]
-        public string NewPassword { get; set; }
-        public string PasswordConfirmation { get; set; }
+        public string Password { get; set; }
+        [Required]
+        public string Name { get; set; }
     }
 }

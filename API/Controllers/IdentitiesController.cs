@@ -140,7 +140,7 @@ namespace API.Controllers
             {
                 return BadRequest(ModelState);
             }
-            var regex = new Regex("(?=[0-9]+)(?=[A-Za-z]+)");
+            var regex = new Regex("(?=.*?[0-9])(?=.*?[A-Za-z]).+");
             if (!regex.IsMatch(passwordPayload.NewPassword))
             {
                 return BadRequest("Password must contain at least 1 character and 1 number");
@@ -154,6 +154,43 @@ namespace API.Controllers
             catch (ArgumentException e)
             {
                 return BadRequest(e.Message);
+            }
+            catch (Exception e)
+            {
+                return StatusCode(500, e.Message);
+            }
+        }
+
+        [HttpPost("register")]
+        public async Task<IActionResult> Register([FromBody] UserCreation user)
+        {
+            if (!ModelState.IsValid)
+            {
+                return BadRequest(ModelState);
+            }
+            var regex = new Regex("(?=.*?[0-9])(?=.*?[A-Za-z]).+");
+            if (!regex.IsMatch(user.Password))
+            {
+                return BadRequest("Password must contain at least 1 character and 1 number");
+            }
+
+            try
+            {
+                await _userManager.CreateUserAsync(new User
+                {
+                    Name = user.Name,
+                    Login = user.Login,
+                    Password = user.Password.GetHashCode()
+                });
+                return await Login(new LoginModel
+                {
+                    Login = user.Login,
+                    Password = user.Password
+                });
+            }
+            catch (ArgumentException e)
+            {
+                return NotFound(e.Message);
             }
             catch (Exception e)
             {

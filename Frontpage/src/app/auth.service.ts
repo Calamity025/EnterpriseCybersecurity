@@ -8,6 +8,7 @@ import { UserLogin } from './model/userLogin';
 import { UserResponse } from './model/userResponse';
 import { Globals } from './globals';
 import { PasswordPayload } from './model/passwordPayload';
+import { UserCreation } from './model/userCreation';
 
 @Injectable({
   providedIn: 'root'
@@ -63,5 +64,15 @@ export class AuthService {
 
   public changePassword(passwordPaylod : PasswordPayload) : Observable<any>{
     return this.httpClient.post<any>(this.globals.PATH + '/api/identities/password', passwordPaylod);
+  }
+
+  public create(user : UserCreation) : Observable<UserResponse>{
+    return this.httpClient.post<UserResponse>(this.globals.PATH + '/api/identities/register', user)
+    .pipe(tap(x => {
+      if(x.user.status === "Active"){
+        this.currentUser$.next(x.user);
+        this.jwtService.persistToken(x.access_token);
+      }
+    }));
   }
 }

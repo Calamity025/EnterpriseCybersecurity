@@ -66,7 +66,7 @@ namespace UserManager
                 throw new ArgumentException("User with such login already exists");
             }
             user.Role = User.Roles.User;
-
+            user.Status = User.Statuses.Active;
             return await _provider.CreateOrUpdateAsync(user);
         }
 
