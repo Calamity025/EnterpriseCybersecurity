@@ -6,8 +6,8 @@ import { Globals } from '../globals';
 import { User } from '../model/user';
 import { UserResponse } from '../model/userResponse';
 import { TokenService } from '../token.service';
-
-let PATH : string = "https://localhost:44399"
+import { AuthService } from '../auth.service';
+declare var $:any;
 
 @Component({
   selector: 'app-login',
@@ -16,34 +16,46 @@ let PATH : string = "https://localhost:44399"
 })
 export class LoginComponent implements OnInit {
   login : UserLogin = {login: null, password: null};
-  loginPasswordErrors : string[] = []; 
-  loginLoginErrors : string[] = []; 
-  attempts: number = 0;
+  loginPasswordError : string = null; 
+  loginLoginError : string = null; 
+  loading : boolean = false;
 
   constructor(
-    private httpClient : HttpClient,
     private router : Router,
     private globals : Globals,
-    private auth : TokenService
+    private auth : AuthService
   ) { }
 
   ngOnInit() {
+    if(this.auth.currentUser$.value){
+      this.router.navigate(['home']);
+    }
   }
 
   onLogInClick(){
-    this.httpClient.post<UserResponse>(PATH + '/api/identities/' + this.attempts, this.login).subscribe(
+    this.loading = true;
+    this.auth.signIn(this.login).subscribe(
       res => {
-        this.globals.User = res.user;
-        this.auth.persistToken(res.access_token);
-        this.router.navigate(['/home']);
-        
+          this.loginLoginError = null;
+          this.loginPasswordError = null;
+        if(res.user.status === "Active"){
+          this.router.navigate(['/home']);
+        }
+        else{
+          $('#modal').modal('show');
+        }
+        this.loading = false;
       },
       err => { 
-        this.attempts++; 
-        if(err.status === 400) 
-          this.loginPasswordErrors[0] = err.error ; 
-        if(err.status === 404){
-          this.loginLoginErrors[0] = err.error;
-        }});
+        if(err.status === 400) { 
+          this.loginPasswordError = err.error ; 
+          this.loginLoginError = null;
+        }
+        else if(err.status === 404){
+          this.loginLoginError = err.error;
+          this.loginPasswordError = null;
+        }
+        this.loading = false;
+      });
   }
 }

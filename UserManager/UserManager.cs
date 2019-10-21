@@ -12,26 +12,6 @@ namespace UserManager
         public UserManager(IProvider provider) =>
             _provider = provider;
 
-        public User CheckUser(string login, string password)
-        {
-            if (password == null)
-            {
-                throw new ArgumentNullException();
-            }
-            var user = _provider.Read(x => x.Login.Equals(login));
-            if (user == null)
-            {
-                throw new KeyNotFoundException("No user with such login");
-            }
-
-            if (user.Password != password.GetHashCode())
-            {
-                throw new ArgumentException("Password is incorrect");
-            }
-
-            return user;
-        }
-
         public async Task<User> CheckUserAsync(string login, string password)
         {
             if (password == null)
@@ -45,25 +25,18 @@ namespace UserManager
             }
             if (user.Password != password.GetHashCode())
             {
+                if (user.FailedLoginCount >= 3 && user.Role != User.Roles.Admin)
+                {
+                    await Suspend(user);
+                    throw new ArgumentException(
+                        "Too many failed login attempts. Account is suspended. Contact admins if you think this is a mistake");
+                }
+                user.FailedLoginCount = user.FailedLoginCount+1;
+                await _provider.CreateOrUpdateAsync(user);
                 throw new ArgumentException("Password is incorrect");
             }
 
             return user;
-        }
-
-        public void ChangePassword(string login, string oldPassword, string newPassword)
-        {
-            if (oldPassword == null || newPassword == null)
-            {
-                throw new ArgumentNullException();
-            }
-            var user = CheckUser(login, oldPassword);
-            if (oldPassword.GetHashCode() == newPassword.GetHashCode())
-            {
-                throw new ArgumentException("New password cannot be the same as the old one");
-            }
-            user.Password = newPassword.GetHashCode();
-            _provider.CreateOrUpdate(user);
         }
 
         public async Task ChangePasswordAsync(string login, string oldPassword, string newPassword)
@@ -73,24 +46,16 @@ namespace UserManager
                 throw new ArgumentNullException();
             }
             var user = await CheckUserAsync(login, oldPassword);
+            if (user.Password != oldPassword.GetHashCode())
+            {
+                throw new ArgumentException("Old password is incorrect");
+            }
             if (oldPassword.GetHashCode() == newPassword.GetHashCode())
             {
                 throw new ArgumentException("New password cannot be the same as the old one");
             }
             user.Password = newPassword.GetHashCode();
             await _provider.CreateOrUpdateAsync(user);
-        }
-
-        public User CreateUser(User user)
-        {
-            var tryGetUser = _provider.Read(x => x.Login.Equals(user.Login));
-            if (tryGetUser != null)
-            {
-                throw new ArgumentException("User with such login already exists");
-            }
-            user.Role = User.Roles.User;
-
-            return _provider.CreateOrUpdate(user);
         }
 
         public async Task<User> CreateUserAsync(User user)
@@ -105,34 +70,8 @@ namespace UserManager
             return await _provider.CreateOrUpdateAsync(user);
         }
 
-        public void ChangePermission(string issuerLogin, string issuerPassword, string targetLogin, User.Roles role)
+        public async Task ChangePermissionAsync(string targetLogin, User.Roles role)
         {
-            var admin = CheckUser(issuerLogin, issuerPassword);
-            if (!admin.Role.Equals(User.Roles.Admin))
-            {
-                throw new ArgumentException("Not enough permissions");
-            }
-            var user = _provider.Read(x => x.Login.Equals(targetLogin));
-            if (user == null)
-            {
-                throw new KeyNotFoundException("No user with such login");
-            }
-            if (user.Role == role)
-            {
-                return;
-            }
-
-            user.Role = role;
-            _provider.CreateOrUpdate(user);
-        }
-
-        public async Task ChangePermissionAsync(string issuerLogin, string issuerPassword, string targetLogin, User.Roles role)
-        {
-            var admin = await CheckUserAsync(issuerLogin, issuerPassword);
-            if (!admin.Role.Equals(User.Roles.Admin))
-            {
-                throw new ArgumentException("Not enough permissions");
-            }
             var user = await _provider.ReadAsync(x => x.Login.Equals(targetLogin));
             if (user == null)
             {
@@ -146,35 +85,6 @@ namespace UserManager
             await _provider.CreateOrUpdateAsync(user);
         }
 
-        public void DeleteUser(string issuerLogin, string issuerPassword, string targetLogin)
-        {
-            var admin = CheckUser(issuerLogin, issuerPassword);
-            if (!admin.Role.Equals(User.Roles.Admin))
-            {
-                throw new ArgumentException("Not enough permissions");
-            }
-            var user = _provider.Read(x => x.Login.Equals(targetLogin));
-            if (user == null)
-            {
-                throw new KeyNotFoundException("No user with such login");
-            }
-            _provider.Delete(user);
-        }
-
-        public async Task DeleteUserAsync(string issuerLogin, string issuerPassword, string targetLogin)
-        {
-            var admin = await CheckUserAsync(issuerLogin, issuerPassword);
-            if (!admin.Role.Equals(User.Roles.Admin))
-            {
-                throw new ArgumentException("Not enough permissions");
-            }
-            var user = await _provider.ReadAsync(x => x.Login.Equals(targetLogin));
-            if (user == null)
-            {
-                throw new KeyNotFoundException("No user with such login");
-            }
-            await _provider.DeleteAsync(user);
-        }
 
         public async Task ChangeStatus(string login, User.Statuses status)
         {
@@ -183,28 +93,27 @@ namespace UserManager
             {
                 throw new KeyNotFoundException("No user with such login");
             }
+            if (user.Role == User.Roles.Admin)
+            {
+                return;
+            }
             user.Status = status;
             await _provider.CreateOrUpdateAsync(user);
         }
 
-        public async Task Suspend(string login)
+        public async Task Suspend(User user)
         {
-            var user = await _provider.ReadAsync(x => x.Login.Equals(login));
-            if (user == null)
+            if (user.Role == User.Roles.Admin)
             {
-                throw new KeyNotFoundException("No user with such login");
+                return;
             }
             user.Status = User.Statuses.Suspended;
-            user.LastFailedLogin = DateTime.UtcNow;
             await _provider.CreateOrUpdateAsync(user);
         }
 
-        public void Seed(IEnumerable<User> users)
+        public async Task<IEnumerable<User>> GetUsers()
         {
-            foreach(var user in users)
-            {
-                _provider.CreateOrUpdate(user);
-            }
+            return await Task.Run(() => _provider.GetUsers());
         }
 
         public async Task SeedAsync(IEnumerable<User> users)

@@ -15,6 +15,11 @@ namespace UserManager.Providers
 
         public DbSet<User> Users { get; set; }
 
+        public IEnumerable<User> GetUsers()
+        {
+            return Users;
+        } 
+
         public User CreateOrUpdate(User user)
         {
             var tryGetUser = Users.Find(user.Login);
@@ -47,7 +52,10 @@ namespace UserManager.Providers
             {
                 tryGetUser.Password = user.Password;
                 tryGetUser.Name = user.Name;
-                tryGetUser.Role = tryGetUser.Role;
+                tryGetUser.Role = user.Role;
+                tryGetUser.Status = user.Status;
+                tryGetUser.Password = user.Password;
+                tryGetUser.FailedLoginCount = user.FailedLoginCount;
                 Users.Update(tryGetUser);
             }
 
@@ -69,12 +77,12 @@ namespace UserManager.Providers
 
         public User Read(Func<User, bool> predicate)
         {
-            return Users.AsNoTracking().Where(x => predicate(x)).FirstOrDefault();
+            return Users.AsNoTracking().FirstOrDefault(x => predicate(x));
         }
 
         public async Task<User> ReadAsync(Func<User, bool> predicate)
         {
-            return await Users.AsNoTracking().Where(x => predicate(x)).FirstOrDefaultAsync();
+            return await Users.AsNoTracking().FirstOrDefaultAsync(x => predicate(x));
         }
     }
 }

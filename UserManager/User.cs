@@ -13,7 +13,7 @@ namespace UserManager
         public int Password { get; set; }
         public Statuses Status { get; set; }
         public Roles Role { get; set; }
-        public DateTime LastFailedLogin { get; set; }
+        public int FailedLoginCount { get; set; }
 
         public enum Roles
         {

@@ -3,5 +3,5 @@ import { User } from './model/user';
 
 @Injectable()
 export class Globals {
-  User : User = null;
+  PATH : string = "https://localhost:44399";
 }
