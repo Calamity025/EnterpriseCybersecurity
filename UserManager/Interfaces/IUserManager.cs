@@ -15,6 +15,8 @@ namespace UserManager.Interfaces
         Task ChangePermissionAsync(string issuerLogin, string issuerPassword, string targetLogin, User.Roles role);
         void DeleteUser(string issuerLogin, string issuerPassword, string targetLogin);
         Task DeleteUserAsync(string issuerLogin, string issuerPassword, string targetLogin);
+        Task ChangeStatus(string login, User.Statuses status);
+        Task Suspend(string login);
         void Seed(IEnumerable<User> users);
         Task SeedAsync(IEnumerable<User> users);
     }

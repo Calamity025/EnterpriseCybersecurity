@@ -6,8 +6,10 @@
         <form class=" d-flex flex-column justify-content-center px-2 mt-4">
             <label for="inputLogin3" class="control-label">Введите логин</label>
             <input name="LoginL" type="text" class="form-control mb-3" id="loginL" placeholder="Login" [(ngModel)]="login.login" #LoginL="ngModel"/><br>
-            <label for="inputPassword3" class="control-label">Введите пароль</label>
+            <span *ngFor="let error of loginLoginErrors" style="color: red;">{{error}}</span>
+            <label for="inputPassword3" class="control-label mt-2">Введите пароль</label>
             <input name="PasswordL" type="password" class="form-control" id="passwordL" placeholder="Password" [(ngModel)]="login.password" #PasswordL="ngModel"/><br>
+            <span *ngFor="let error of loginPasswordErrors" style="color: red;">{{error}}</span>
             <button type="submit" class="mt-5 btn btn-success align-self-end" (click)="onLogInClick()">Sign in</button>
         </form> 
     </div>

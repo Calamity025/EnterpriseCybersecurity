@@ -176,6 +176,29 @@ namespace UserManager
             await _provider.DeleteAsync(user);
         }
 
+        public async Task ChangeStatus(string login, User.Statuses status)
+        {
+            var user = await _provider.ReadAsync(x => x.Login.Equals(login));
+            if (user == null)
+            {
+                throw new KeyNotFoundException("No user with such login");
+            }
+            user.Status = status;
+            await _provider.CreateOrUpdateAsync(user);
+        }
+
+        public async Task Suspend(string login)
+        {
+            var user = await _provider.ReadAsync(x => x.Login.Equals(login));
+            if (user == null)
+            {
+                throw new KeyNotFoundException("No user with such login");
+            }
+            user.Status = User.Statuses.Suspended;
+            user.LastFailedLogin = DateTime.UtcNow;
+            await _provider.CreateOrUpdateAsync(user);
+        }
+
         public void Seed(IEnumerable<User> users)
         {
             foreach(var user in users)

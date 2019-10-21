@@ -31,6 +31,7 @@ namespace Frontpage
             services.AddScoped(factory => new UserManager.UserManagerFactory().Create(UserManager.UserManagerFactory.ProviderType.Database, Configuration.GetConnectionString("default")));
             services.AddMvcCore()
                 .AddJsonFormatters()
+                .AddAuthorization()
                 .SetCompatibilityVersion(CompatibilityVersion.Version_2_2);
         }
 
