@@ -12,6 +12,11 @@ namespace UserManager.Providers
         private readonly Dictionary<string, User> _users = new Dictionary<string, User>();
         private readonly object _locker = new object();
 
+        public IEnumerable<User> GetUsers()
+        {
+            return _users.Values.ToList();
+        }
+
         public User CreateOrUpdate(User user)
         {
             lock (_locker)

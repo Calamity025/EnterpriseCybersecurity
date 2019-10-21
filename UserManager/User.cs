@@ -11,12 +11,21 @@ namespace UserManager
         public string Login { get; set; }
         public string  Name { get; set; }
         public int Password { get; set; }
+        public Statuses Status { get; set; }
         public Roles Role { get; set; }
+        public int FailedLoginCount { get; set; }
 
         public enum Roles
         {
             Admin,
             User
+        }
+
+        public enum Statuses
+        {
+            Active,
+            Suspended,
+            Banned
         }
     }
 }

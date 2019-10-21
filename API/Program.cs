@@ -11,7 +11,7 @@ using Microsoft.Extensions.Logging;
 using UserManager;
 using UserManager.Interfaces;
 
-namespace Frontpage
+namespace API
 {
     public class Program
     {
@@ -38,7 +38,7 @@ namespace Frontpage
                 new User { Login = "Calamity", Password = "AnotherQwerty".GetHashCode(), Name = "Another Vitalii", Role = User.Roles.User }
             };
 
-            manager.Seed(users);
+            manager.SeedAsync(users).Wait();
         }
     }
 }

@@ -6,11 +6,13 @@ using System.Threading.Tasks;
 
 namespace API
 {
-    public class LoginModel
+    public class UserCreation
     {
         [Required]
         public string Login { get; set; }
         [Required]
         public string Password { get; set; }
+        [Required]
+        public string Name { get; set; }
     }
 }

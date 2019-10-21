@@ -7,6 +7,7 @@ namespace UserManager.Interfaces
 {
     internal interface IProvider
     {
+        IEnumerable<User> GetUsers();
         User Read(Func<User, bool> predicate);
         Task<User> ReadAsync(Func<User, bool> predicate);
         User CreateOrUpdate(User user);
