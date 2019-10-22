@@ -7,7 +7,7 @@ To run this project you need:
 .Net Core - https://dotnet.microsoft.com/download/dotnet-core
 Node.js - https://nodejs.org/download/release/v10.15.1/
 
-Open the solution in visual studio and right click on solution in Solution Explorer, chose restore NuGet packages if avaible. Next right click on solution again and prees rebuild, when build is finished choose startup profile IIS Express as shown below and press it.  
+Open the solution in visual studio and right click on solution in Solution Explorer, choose restore NuGet packages if available. Next right click on solution again and press rebuild, when build is finished choose startup profile IIS Express as shown below and press it.  
 
 ![alt text](https://i.imgur.com/dU1CXEt.png)
 
