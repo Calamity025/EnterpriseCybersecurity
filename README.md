@@ -1,5 +1,3 @@
-# UserManager
- 
 # How to run
 
 To run this project you need: 
